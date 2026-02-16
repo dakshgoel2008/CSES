@@ -2,24 +2,6 @@
     author:  UG_BEAST
 **/
  
-#include <bits/stdc++.h>
-using namespace std;
- 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef long double lld;
- 
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
- 
-#define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
- 
-const ll mod = 1e9 + 7;
- 
-#define fr(i, n) for (ll i = 0; i < n; ++i)
-#define all(v) v.begin(), v.end()
-#define pb push_back
- 
 void solve() {
     int a, b; cin >> a >> b;
     // state -> dp[i][j] = minimum no of cuts for a*b grid.
@@ -47,19 +29,25 @@ void solve() {
  
     cout << dp[a][b] << endl;
 }
- 
-int main() {
-    fastio();
-#ifndef ONLINE_JUDGE
-    freopen("Error.txt", "w", stderr);
-    freopen("output.txt", "w", stdout);
-    freopen("input.txt", "r", stdin);
-#endif
- 
-    int t = 1;
-    while (t--) {
-        solve();
-    }
- 
-    return 0;
+
+
+// RECURSIVE + MEMOIZATION 
+void solve() {
+	ll a, b; cin >> a >> b;
+	vector<vector<int>> dp(a + 1, vector<int>(b + 1, -1));
+
+	function<int(int, int)> f = [&](int i, int j) {
+		if (i == j) return 0;	// got 1 square no need to cut further.
+		// vertical cuts:
+		if (dp[i][j] != -1) return dp[i][j];
+
+		int ans = INF;
+		// horizontal cuts.
+		for (int c = 1; c <= i/2; ++c) ans = min(ans, f(c, j) + f(i - c, j) + 1);
+		for (int c = 1; c <= j/2; ++c) ans = min(ans, f(i, c) + f(i, j - c) + 1);
+
+		return dp[i][j] = ans;
+	};
+
+	cout << f(a, b) << endl;
 }

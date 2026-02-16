@@ -1,18 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
- 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef long double lld;
- 
-#define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
- 
-const ll mod = 1e9 + 7;
- 
-#define fr(i, n) for (ll i = 0; i < n; ++i)
-#define all(v) v.begin(), v.end()
-#define pb push_back
- 
 void solve() {
 	ll n, m; cin >> n >> m;
 	vector<ll> a(n);
@@ -50,19 +35,34 @@ void solve() {
 	cout << ans << endl;
 }
  
-int main() {
-	fastio();
-#ifndef ONLINE_JUDGE
-	freopen("Error.txt", "w", stderr);
-	freopen("output.txt", "w", stdout);
-	freopen("input.txt", "r", stdin);
-#endif
- 
-	int t = 1;
-	// cin >> t;
-	while (t--) {
-		solve();
+
+// DP WITH MEMOIZATION
+void solve() {
+	ll n, m; cin >> n >> m;
+	vector<ll> a(n);
+	fr(i, n)cin >> a[i];
+
+	// f(i, j) = total number arr possible with len i and last element as j.
+	vector<vector<ll>> dp(n + 1, vector<ll>(m + 1, -1));
+
+	function<ll(ll, ll)> f = [&](ll i, ll k) {
+		if (a[i - 1] != 0LL && a[i - 1] != k) return 0LL;
+
+		if (i == 1LL) return 1LL;
+
+		if (dp[i][k] != -1) return dp[i][k];
+		ll ans = 0;
+		if (k > 1) ans = (ans + f(i - 1, k - 1)) % mod;
+		ans = (ans + f(i - 1, k)) % mod;
+		if (k < m)ans = (ans + f(i - 1, k + 1)) % mod;
+
+		return dp[i][k] = ans;
+	};
+
+	ll sum = 0;
+	for (int i = 1; i <= m; ++i)
+	{
+		sum = (sum + f(n, i)) % mod;
 	}
- 
-	return 0;
+	cout << sum << endl;
 }
